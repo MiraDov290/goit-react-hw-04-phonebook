@@ -1,65 +1,65 @@
-import React, { Component } from 'react';
+import { useState } from 'react';
 import { nanoid } from 'nanoid';
 import { Form, Label, Button, Input } from './ContactForm.styled';
 
-class ContactForm extends Component {
-  state = {
-    name: '',
-    number: '',
-  };
+const ContactForm = ({ onSubmit }) => {
+  const [name, setName] = useState('');
+  const [number, setNumber] = useState('');
+
 
   // Генерація унікальних ідентифікаторів для полів форми
-  nameInputId = nanoid();
-  numberInputId = nanoid();
+  const nameInputId = nanoid();
+  const numberInputId = nanoid();
 
   // Оброблення відправки форми
-  handleSubmit = event => {
-    event.preventDefault();
+const handleSubmit = event => {
+  event.preventDefault();
 
-    // Виклик функції onSubmit з батьківського компонента з передачею об'єкта контакта
-    this.props.onSubmit({
-      name: this.state.name.trim(),
-      number: this.state.number.trim(),
-    });
-
-    // Відміна значення форми
-    this.reset();
-  };
+  // Виклик функції onSubmit з батьківського компонента з передачею об'єкта контакта
+  onSubmit({ name, number });
+  setName('');
+  setNumber('');
+};
+  
 
   // Оброблення зміни значення полів форми
-  handleChange = event => {
-    const { name, value } = event.target;
-    this.setState({ [name]: value });
-  };
+const handleChange = event => {
+  const { name, value } = event.target;
 
-  // Відміна значення форми
-  reset = () => {
-    this.setState({ number: '', name: '' });
-  };
+  switch (name) {
+    case 'name':
+      setName(value);
+      break;
+    case 'number':
+      setNumber(value);
+      break;
+    default:
+      return;
+  }
+};
 
-  render() {
     return (
-      <Form onSubmit={this.handleSubmit}>
-        <Label htmlFor={this.nameInputId}>
+      <Form onSubmit={handleSubmit}>
+        <Label htmlFor={nameInputId}>
           Name
           <Input
             type="text"
             name="name"
-            value={this.state.name}
-            onChange={this.handleChange}
+            value={name}
+            onChange={handleChange}
             pattern="^[a-zA-Zа-яА-Я]+(([' \-][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
             title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
             required
           />
         </Label>
 
-        <Label htmlFor={this.numberInputId}>
+        <Label htmlFor={numberInputId}>
           Number
           <Input
             type="tel"
             name="number"
-            value={this.state.number}
-            onChange={this.handleChange}
+            value={number}
+            onChange={handleChange}
             pattern="\+?\d{1,4}?[ .\-\s]?\(?\d{1,3}?\)?[ .\-\s]?\d{1,4}[ .\-\s]?\d{1,4}[ .\-\s]?\d{1,9}"
             title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
             required
@@ -70,8 +70,7 @@ class ContactForm extends Component {
           Add contact
         </Button>
       </Form>
-    );
-  }
-}
+);
+    };
 
 export default ContactForm;
